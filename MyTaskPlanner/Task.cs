@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quartz;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ namespace MyTaskPlanner
     /// </summary>
     [Serializable]
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-    public class Task : ICloneable
+    public class Task : ICloneable, IJob
     {
         /// <summary>
         /// Time to complete the task (if available).
@@ -60,7 +61,7 @@ namespace MyTaskPlanner
         /// <summary>
         /// Time to repeat the task.
         /// </summary>
-        public List<DateTime> TaskRepeatTime { get; set; }
+        public CronExpression TaskRepeatTime { get; set; }
 
         /// <summary>
         /// Flags to identify task completion mode.
@@ -216,6 +217,11 @@ namespace MyTaskPlanner
         private string GetDebuggerDisplay()
         {
             return ToString();
+        }
+
+        public System.Threading.Tasks.Task Execute(IJobExecutionContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }
