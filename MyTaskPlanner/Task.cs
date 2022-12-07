@@ -166,7 +166,7 @@ namespace MyTaskPlanner
         }
 
         /// <summary>
-        /// Enumeration that represents the state of the task in timing organization.
+        /// Represents the state of the task in timing organization.
         /// </summary>
         [Flags]
         public enum TimeState
@@ -189,7 +189,7 @@ namespace MyTaskPlanner
             /// <summary>
             /// Indicates if the task should be repeated every week.
             /// </summary>
-            WeeklyAutoRepeat = 4
+            RepeatWeekly = 4
         }
     }
 }
