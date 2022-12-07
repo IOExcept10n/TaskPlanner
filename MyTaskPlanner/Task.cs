@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace MyTaskPlanner
 {
@@ -8,7 +9,8 @@ namespace MyTaskPlanner
     /// Represents a task to make a schedule/daily plan.
     /// </summary>
     [Serializable]
-    public class Task
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    public class Task : ICloneable
     {
         /// <summary>
         /// Time to complete the task (if available).
@@ -36,6 +38,16 @@ namespace MyTaskPlanner
         public DateTime StartDate { get; set; }
 
         /// <summary>
+        /// The status of the task.
+        /// </summary>
+        public TaskStatus Status { get; set; }
+
+        /// <summary>
+        /// The list of subtasks which must be completed to complete the task.
+        /// </summary>
+        public List<Task> Subtasks { get; set; }
+
+        /// <summary>
         /// List of tags of the task.
         /// </summary>
         public List<TextTag> Tags { get; set; }
@@ -44,6 +56,11 @@ namespace MyTaskPlanner
         /// If of the group of the task used to classify it.
         /// </summary>
         public int TaskGroupId { get; set; }
+
+        /// <summary>
+        /// Time to repeat the task.
+        /// </summary>
+        public List<DateTime> TaskRepeatTime { get; set; }
 
         /// <summary>
         /// Flags to identify task completion mode.
@@ -55,21 +72,6 @@ namespace MyTaskPlanner
         /// </summary>
         [StringLength(25, MinimumLength = 3)]
         public string Title { get; set; }
-
-        /// <summary>
-        /// Time to repeat the task.
-        /// </summary>
-        public List<DateTime> TaskRepeatTime { get; set; }
-
-        /// <summary>
-        /// The status of the task.
-        /// </summary>
-        public TaskStatus Status { get; set; }
-
-        /// <summary>
-        /// The list of subtasks which must be completed to complete the task.
-        /// </summary>
-        public List<Task> Subtasks { get; set; }
 
         /// <summary>
         /// Enumeration that represents task priority level name.
@@ -143,22 +145,27 @@ namespace MyTaskPlanner
             /// Task which is unfinished yet.
             /// </summary>
             Unfinished,
+
             /// <summary>
             /// A completed task.
             /// </summary>
             Completed,
+
             /// <summary>
             /// A task which is failed because of time limit or for which manual fail option selected.
             /// </summary>
             Failed,
+
             /// <summary>
             /// Task some of which subtasks are completed
             /// </summary>
             PartlyCompleted,
+
             /// <summary>
             /// A canceled task.
             /// </summary>
             Canceled,
+
             /// <summary>
             /// An exceeded task (can be selected only manually).
             /// </summary>
@@ -190,6 +197,25 @@ namespace MyTaskPlanner
             /// Indicates if the task should be repeated every week.
             /// </summary>
             RepeatWeekly = 4
+        }
+
+        /// <inheritdoc/>
+        public object Clone()
+        {
+            Task task = MemberwiseClone() as Task;
+            task.Subtasks = Subtasks.ConvertAll(x => (Task)x.Clone());
+            return task;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return $"{Title} [{StartDate}-{Deadline}]: {Status}";
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            return ToString();
         }
     }
 }
