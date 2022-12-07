@@ -8,7 +8,7 @@ namespace MyTaskPlanner
     /// Represents a string tag to make easy string sorting.
     /// </summary>
     [Serializable]
-    public class TextTag
+    public struct TextTag
     {
         /// <summary>
         /// The color of the tag.
